@@ -29,10 +29,16 @@ app.get("/", (req, res) => {
 });
 
 const startApolloServer = async (typeDefs, resolvers) => {
-	await server.start();
-	server.applyMiddleware({ app });
-
-	db.once("open", () => console.log(`app is listening on localhost:${PORT}`));
+	await apolloServer.start();
+	apolloServer.applyMiddleware({ app });
+	db.once("open", () => {
+		server.listen(PORT, () => {
+			console.log(`Server is listening on port ${PORT}`);
+			console.log(
+				`Use GraphQL at http://localhost:${PORT}${apolloServer.graphqlPath}`
+			);
+		});
+	});
 };
 
 startApolloServer(typeDefs, resolvers);
